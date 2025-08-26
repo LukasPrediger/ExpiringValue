@@ -1,8 +1,12 @@
+@file:Suppress("UnstableApiUsage")
 
 plugins {
     alias(libs.plugins.jvm)
 
     `java-library`
+    `jvm-test-suite`
+
+    alias(libs.plugins.kotest)
 }
 
 repositories {
@@ -11,14 +15,23 @@ repositories {
 
 dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation(libs.junit.jupiter.engine)
-
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+testing {
+    suites {
+        named<JvmTestSuite>("test") {
+            dependencies {
+                implementation(platform(libs.kotest.bom))
+                implementation(libs.kotest.engine)
+                implementation(libs.kotest.assertions)
+            }
+        }
     }
 }
 
