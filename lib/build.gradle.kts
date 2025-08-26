@@ -5,8 +5,7 @@ plugins {
 
     `java-library`
     `jvm-test-suite`
-
-    alias(libs.plugins.kotest)
+    jacoco
 }
 
 repositories {
@@ -14,7 +13,11 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation(platform(libs.kotest.bom))
+    testImplementation(libs.kotest.runner)
+    testImplementation(libs.kotest.assertions)
+    testImplementation(libs.kotest.extensions)
+
 }
 
 java {
@@ -23,19 +26,13 @@ java {
     }
 }
 
-testing {
-    suites {
-        named<JvmTestSuite>("test") {
-            dependencies {
-                implementation(platform(libs.kotest.bom))
-                implementation(libs.kotest.engine)
-                implementation(libs.kotest.assertions)
-                implementation(libs.kotest.extensions)
-            }
-        }
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
     }
 }
 
-tasks.named<Test>("test") {
+tasks.withType<Test> {
     useJUnitPlatform()
 }
