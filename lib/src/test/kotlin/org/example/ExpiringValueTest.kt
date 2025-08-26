@@ -1,14 +1,13 @@
 package org.example
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.extensions.clock.TestClock
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.assertThrows
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.concurrent.LinkedBlockingQueue
-import kotlin.test.assertEquals
+
 
 class ExpiringValueTest : ShouldSpec({
     context("An expiringValue") {
@@ -18,7 +17,7 @@ class ExpiringValueTest : ShouldSpec({
         }
 
         should("Should return new value if value expires") {
-            val testClock = TestClock()
+            val testClock = testClock()
             val valueQueue = LinkedBlockingQueue(
                 listOf(
                     "value" to Instant.ofEpochSecond(1000),
@@ -29,36 +28,24 @@ class ExpiringValueTest : ShouldSpec({
             val expiringValue = ExpiringValue(clock = testClock, valueSupplier = { valueQueue.poll() })
 
             // Get old value
-            assertEquals("value", expiringValue.get())
+            expiringValue.get() shouldBe "value"
 
             //Advance clock
-            testClock.instant = Instant.ofEpochSecond(1500)
+            testClock.setInstant(Instant.ofEpochSecond(1500))
 
             //Get new value
-            assertEquals("new value", expiringValue.get())
+            expiringValue.get() shouldBe "new value"
         }
 
         should("Should throw exception is value supplied is already expired") {
-            val testClock = TestClock()
-            testClock.instant = Instant.ofEpochSecond(1500)
+            val testClock = testClock(Instant.ofEpochSecond(1500))
 
-            assertThrows<ValueExpiredException> {
+            shouldThrow<ValueExpiredException> {
                 ExpiringValue(clock = testClock, valueSupplier = { "value" to Instant.ofEpochSecond(1000) })
             }
-
         }
     }
 })
 
-class TestClock : Clock() {
-    var instant: Instant = Instant.MIN
-
-    override fun instant(): Instant = instant
-
-    override fun withZone(zone: ZoneId?): Clock {
-        throw UnsupportedOperationException()
-    }
-
-    override fun getZone(): ZoneId = ZoneOffset.UTC
-
-}
+fun testClock(instant: Instant = Instant.MIN, offset: ZoneOffset = ZoneOffset.UTC) =
+    TestClock(instant, offset)

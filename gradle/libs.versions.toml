@@ -9,6 +9,7 @@ kotest = "6.0.1"
 kotest-bom = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
 kotest-engine = { module = "io.kotest:kotest-framework-engine" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core" }
+kotest-extensions = { module = "io.kotest:kotest-extensions" }
 
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
