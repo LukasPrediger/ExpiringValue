@@ -8,22 +8,12 @@ plugins {
     jacoco
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation(platform(libs.kotest.bom))
     testImplementation(libs.kotest.runner)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.kotest.extensions)
 
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
 }
 
 tasks.jacocoTestReport {
