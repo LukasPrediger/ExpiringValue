@@ -6,10 +6,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class ExpiringValueTest {
     @Test
@@ -21,7 +19,7 @@ class ExpiringValueTest {
     @Test
     fun `Should return new value if value expires`() {
         val testClock = TestClock()
-        val valueQueue = LinkedBlockingQueue<Pair<String, Instant>>(
+        val valueQueue = LinkedBlockingQueue(
             listOf(
                 "value" to Instant.ofEpochSecond(1000),
                 "new value" to Instant.ofEpochSecond(2000),
@@ -42,7 +40,7 @@ class ExpiringValueTest {
     }
 
     @Test
-    fun `Should throw exception is value supplied is already expired`(): Unit {
+    fun `Should throw exception is value supplied is already expired`() {
         val testClock = TestClock()
         testClock.instant = Instant.ofEpochSecond(1500)
 
