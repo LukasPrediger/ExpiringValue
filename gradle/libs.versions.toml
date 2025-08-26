@@ -13,4 +13,3 @@ kotest-extensions = { module = "io.kotest:kotest-extensions" }
 
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotest = { id = "io.kotest", version.ref = "kotest" }
